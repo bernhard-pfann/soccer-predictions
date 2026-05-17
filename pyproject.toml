@@ -1,0 +1,15 @@
+[project]
+name = "soccer-predictions"
+version = "0.1.0"
+description = "Predicts results of soccer games from national teams"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "ipykernel>=7.2.0",
+    "ipywidgets>=8.1.8",
+    "kaggle>=2.1.2",
+    "pandas>=3.0.3",
+    "python-dotenv>=1.2.2",
+    "scipy>=1.17.1",
+    "seaborn>=0.13.2",
+]
