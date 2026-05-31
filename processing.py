@@ -3,11 +3,46 @@ from datetime import datetime
 import pandas as pd
 
 
+def process_results(path: str) -> pd.DataFrame:
+    return clean_results(load_results(path))
+
+
+def load_results(path: str) -> pd.DataFrame:
+    cols = ["date", "home_team", "away_team", "home_score", "away_score"]
+    return pd.read_csv(path, parse_dates=["date"], usecols=cols)
+
+
 def clean_results(df: pd.DataFrame) -> pd.DataFrame:
     df = df.dropna()
     df = df[df["date"] > datetime(2015, 1, 1)]  # pyright: ignore[reportAssignmentType]
     df["home_score"] = df["home_score"].astype(int, errors="ignore")
     df["away_score"] = df["away_score"].astype(int, errors="ignore")
+    return df
+
+
+def process_rankings(path: str) -> pd.DataFrame:
+    return clean_rankings(map_ranking_countries(load_rankings(path)))
+
+
+def load_rankings(path: str) -> pd.DataFrame:
+    cols = ["rank_date", "country_full", "rank"]
+    df = pd.read_csv(path, parse_dates=["rank_date"], usecols=cols)
+    df.rename(columns={"rank_date": "date", "country_full": "country"}, inplace=True)
+    return df
+
+
+def map_ranking_countries(df: pd.DataFrame) -> pd.DataFrame:
+    country_map = {
+        "USA": "United States",
+        "Korea Republic": "South Korea",
+        "Côte d'Ivoire": "Ivory Coast",
+        "IR Iran": "Iran",
+        "Czechia": "Czech Republic",
+        "Türkiye": "Turkey",
+        "Cabo Verde": "Cape Verde",
+        "Congo": "DR Congo",
+    }
+    df["country"] = df["country"].replace(country_map)
     return df
 
 

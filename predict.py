@@ -5,7 +5,8 @@ import pandas as pd
 from scipy.stats import expon, norm
 
 
-def normalize(series: pd.Series) -> pd.Series:
+def normalize(series: pd.Series | np.ndarray) -> np.ndarray:
+    series = np.asarray(series, dtype=np.float64)
     return series / series.sum()
 
 
@@ -19,9 +20,7 @@ def get_comparable_matches(
     matches = df[df["home_team"] == team].copy()
     matches["days_diff"] = (day - matches["date"]).dt.days
     matches["time_weight"] = normalize(expon.pdf(matches["days_diff"], scale=time_sigma))
-    matches["rank_weight"] = normalize(
-        norm.pdf(matches["rank_diff"], loc=rank_diff, scale=rank_sigma)
-    )
+    matches["rank_weight"] = normalize(norm.pdf(matches["rank_diff"], loc=rank_diff, scale=rank_sigma))
     matches["weight"] = normalize(np.sqrt(matches["time_weight"] * matches["rank_weight"]))
     matches.sort_values(by="weight", ascending=False, inplace=True)
     return matches
@@ -46,6 +45,12 @@ def draw_result(
     return home_samples.tolist(), away_samples.tolist()
 
 
+def deterministic_result(home_stats: tuple[float, float], away_stats: tuple[float, float]) -> tuple[int, int]:
+    home_lambda = (home_stats[0] + away_stats[1]) / 2
+    away_lambda = (home_stats[1] + away_stats[0]) / 2
+    return round(home_lambda), round(away_lambda)
+
+
 def predict_score(
     df: pd.DataFrame,
     rankings: pd.DataFrame,
@@ -54,7 +59,8 @@ def predict_score(
     day: datetime,
     time_sigma: float = 90,
     rank_sigma: float = 15,
-) -> tuple[int, int]:
+    sample: bool = True
+) -> tuple[int, int] | tuple[list[int], list[int]]:
     rank_diff = get_ranking(df=rankings, team=home_team, day=day) - get_ranking(
         df=rankings, team=away_team, day=day
     )
@@ -63,5 +69,7 @@ def predict_score(
     away_team_matches = get_comparable_matches(df=df, team=away_team, rank_diff=-rank_diff, **args)
     home_team_stats = get_offense_defense(home_team_matches)
     away_team_stats = get_offense_defense(away_team_matches)
-
-    return draw_result(home_stats=home_team_stats, away_stats=away_team_stats)
+    if sample:
+        return draw_result(home_stats=home_team_stats, away_stats=away_team_stats)
+    else:
+        return deterministic_result(home_stats=home_team_stats, away_stats=away_team_stats)
