@@ -11,17 +11,20 @@ def plot_comparable_matches(matches: pd.DataFrame, team: str, top_n: int = 10, w
     _, ax = plt.subplots(figsize=(10, 5), dpi=200)
     bars = ax.barh(y=labels, width=df[weight_col])
     
+    max_weight = df[weight_col].max()
+    margin = max_weight * 0.01
+    ax.set_xlim(0, max_weight * 1.15)
+
     for bar, score in zip(bars, df["score"]):
         ax.text(
-            x=bar.get_width() + 0.005,
+            x=bar.get_width() + margin,
             y=bar.get_y() + bar.get_height() / 2,
             s=str(score),
             va="center",
             ha="left",
-            fontsize=8,
         )
 
-    ax.set_xlim(0, df[weight_col].max() * 1.15)
+    
     ax.invert_yaxis()  # highest weight on top
     ax.set_title(f"Comparable Matches for {team}")
     ax.set_xlabel(weight_col.replace("_", " ").title())
