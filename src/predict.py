@@ -42,8 +42,8 @@ class PredictionResult:
 class MatchPredictor:
     """Football match predictor based on weighted historical matches."""
 
-    def __init__(self, matches: pd.DataFrame, rankings: pd.DataFrame, config: SimilarityConfig = SimilarityConfig()) -> None:
-        self.matches = matches
+    def __init__(self, dataset: pd.DataFrame, rankings: pd.DataFrame, config: SimilarityConfig = SimilarityConfig()) -> None:
+        self.dataset = dataset
         self.rankings = rankings
         self.config = config
 
@@ -102,7 +102,7 @@ class MatchPredictor:
         )
 
     def _get_comparable_matches(self, team: str, day: datetime, rank_diff: int) -> pd.DataFrame:
-        df = self.matches[self.matches["home_team"] == team].copy()
+        df = self.dataset[self.dataset["home_team"] == team].copy()
 
         df["days_diff"] = (day - df["date"]).dt.days
         df["time_weight"] = self._normalize(expon.pdf(df["days_diff"], scale=self.config.time_sigma))
