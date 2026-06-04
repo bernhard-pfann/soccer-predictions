@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from datetime import datetime
 
 import numpy as np
@@ -5,71 +6,136 @@ import pandas as pd
 from scipy.stats import expon, norm
 
 
-def normalize(series: pd.Series | np.ndarray) -> np.ndarray:
-    series = np.asarray(series, dtype=np.float64)
-    return series / series.sum()
+@dataclass(frozen=True)
+class SimilarityConfig:
+    """Configuration for match similarity weighting."""
+    time_sigma: float = 90
+    rank_sigma: float = 15
 
 
-def get_ranking(df: pd.DataFrame, team: str, day: datetime) -> int:
-    return df[(df["country"] == team) & (df["date"] <= day)].iloc[-1]["rank"]
+@dataclass(frozen=True)
+class TeamStats:
+    """Weighted offensive and defensive strength of a team."""
+    offense: float
+    defense: float
 
 
-def get_comparable_matches(
-    df: pd.DataFrame, team: str, day: datetime, rank_diff: int, time_sigma: float, rank_sigma: float
-) -> pd.DataFrame:
-    matches = df[df["home_team"] == team].copy()
-    matches["days_diff"] = (day - matches["date"]).dt.days
-    matches["time_weight"] = normalize(expon.pdf(matches["days_diff"], scale=time_sigma))
-    matches["rank_weight"] = normalize(norm.pdf(matches["rank_diff"], loc=rank_diff, scale=rank_sigma))
-    matches["weight"] = normalize(np.sqrt(matches["time_weight"] * matches["rank_weight"]))
-    matches.sort_values(by="weight", ascending=False, inplace=True)
-    return matches
+@dataclass(frozen=True)
+class GameStats:
+    """Expected goals for both teams of a game."""
+    home: float
+    away: float
 
 
-def get_offense_defense(df: pd.DataFrame) -> tuple[float, float]:
-    offense = (df["home_score"] * df["weight"]).sum()
-    defense = (df["away_score"] * df["weight"]).sum()
-    return offense, defense
+@dataclass(frozen=True)
+class PredictionResult:
+    """Full prediction output including intermediate artifacts."""
+    score: tuple[int, int] | tuple[list[int], list[int]]
+    rank_diff: int
+    home_matches: pd.DataFrame
+    away_matches: pd.DataFrame
+    home_stats: TeamStats
+    away_stats: TeamStats
+    game_stats: GameStats
 
 
-def draw_result(
-    home_stats: tuple[float, float], away_stats: tuple[float, float], n: int = 1
-) -> tuple[int, int] | tuple[list[int], list[int]]:
-    home_lambda = (home_stats[0] + away_stats[1]) / 2
-    away_lambda = (home_stats[1] + away_stats[0]) / 2
-    home_samples = np.random.poisson(home_lambda, n)
-    away_samples = np.random.poisson(away_lambda, n)
+class MatchPredictor:
+    """Football match predictor based on weighted historical matches."""
 
-    if n == 1:
-        return home_samples.item(), away_samples.item()
-    return home_samples.tolist(), away_samples.tolist()
+    def __init__(self, matches: pd.DataFrame, rankings: pd.DataFrame, config: SimilarityConfig = SimilarityConfig()) -> None:
+        self.matches = matches
+        self.rankings = rankings
+        self.config = config
 
+    def predict(self, home_team: str, away_team: str, day: datetime, sample: bool = True, sample_size: int = 1) -> PredictionResult:
+        """
+        Predict a match and return all intermediate artifacts.
 
-def deterministic_result(home_stats: tuple[float, float], away_stats: tuple[float, float]) -> tuple[int, int]:
-    home_lambda = (home_stats[0] + away_stats[1]) / 2
-    away_lambda = (home_stats[1] + away_stats[0]) / 2
-    return round(home_lambda), round(away_lambda)
+        :param home_team: Home team.
+        :param away_team: Away team.
+        :param day: Match date.
+        :param sample: Whether to sample from Poisson distributions.
+        :param sample_size: Number of samples to draw. This parameter is unused when sample = False.
+        :return: Prediction result.
+        """
+        rank_diff = self._get_rank_difference(home_team=home_team, away_team=away_team, day=day)
+        home_matches = self._get_comparable_matches(team=home_team, day=day, rank_diff=rank_diff)
+        away_matches = self._get_comparable_matches(team=away_team, day=day, rank_diff=-rank_diff)
 
+        home_stats = self._get_team_stats(home_matches)
+        away_stats = self._get_team_stats(away_matches)
+        game_stats = self._get_game_stats(home_stats=home_stats, away_stats=away_stats)
 
-def predict_score(
-    df: pd.DataFrame,
-    rankings: pd.DataFrame,
-    home_team: str,
-    away_team: str,
-    day: datetime,
-    time_sigma: float = 90,
-    rank_sigma: float = 15,
-    sample: bool = True
-) -> tuple[int, int] | tuple[list[int], list[int]]:
-    rank_diff = get_ranking(df=rankings, team=home_team, day=day) - get_ranking(
-        df=rankings, team=away_team, day=day
-    )
-    args = {"day": day, "time_sigma": time_sigma, "rank_sigma": rank_sigma}
-    home_team_matches = get_comparable_matches(df=df, team=home_team, rank_diff=rank_diff, **args)
-    away_team_matches = get_comparable_matches(df=df, team=away_team, rank_diff=-rank_diff, **args)
-    home_team_stats = get_offense_defense(home_team_matches)
-    away_team_stats = get_offense_defense(away_team_matches)
-    if sample:
-        return draw_result(home_stats=home_team_stats, away_stats=away_team_stats)
-    else:
-        return deterministic_result(home_stats=home_team_stats, away_stats=away_team_stats)
+        if sample:
+            score = self._draw_result(game_stats, n=sample_size)
+        else:
+            score = self._round_game_stats(game_stats)
+
+        return PredictionResult(
+            score=score,
+            rank_diff=rank_diff,
+            home_matches=home_matches,
+            away_matches=away_matches,
+            home_stats=home_stats,
+            away_stats=away_stats,
+            game_stats=game_stats,
+        )
+
+    @staticmethod
+    def _normalize(series: pd.Series | np.ndarray) -> np.ndarray:
+        series = np.asarray(series, dtype=np.float64)
+        return series / series.sum()
+
+    def _get_ranking(self, team: str, day: datetime) -> int:
+        return int(
+            self.rankings[
+                (self.rankings["country"] == team) & 
+                (self.rankings["date"] <= day)
+            ]
+            .iloc[-1]["rank"]
+        )
+
+    def _get_rank_difference(self, home_team: str, away_team: str, day: datetime) -> int:
+        return (
+            self._get_ranking(home_team, day) - 
+            self._get_ranking(away_team, day)
+        )
+
+    def _get_comparable_matches(self, team: str, day: datetime, rank_diff: int) -> pd.DataFrame:
+        df = self.matches[self.matches["home_team"] == team].copy()
+
+        df["days_diff"] = (day - df["date"]).dt.days
+        df["time_weight"] = self._normalize(expon.pdf(df["days_diff"], scale=self.config.time_sigma))
+        df["rank_weight"] = self._normalize(norm.pdf(df["rank_diff"], loc=rank_diff, scale=self.config.rank_sigma))
+        df["weight"] = self._normalize(np.sqrt(df["time_weight"] * df["rank_weight"]))
+        return df.sort_values(by="weight", ascending=False)
+
+    @staticmethod
+    def _get_team_stats(matches: pd.DataFrame) -> TeamStats:
+        return TeamStats(
+            offense=(matches["home_score"] * matches["weight"]).sum(),
+            defense=(matches["away_score"] * matches["weight"]).sum(),
+        )
+
+    @staticmethod
+    def _get_game_stats(home_stats: TeamStats, away_stats: TeamStats) -> GameStats:
+        return GameStats(
+            home=(home_stats.offense + away_stats.defense) / 2,
+            away=(away_stats.offense + home_stats.defense) / 2,
+        )
+
+    @staticmethod
+    def _round_game_stats(game_stats: GameStats) -> tuple[int, int]:
+        return (
+            round(game_stats.home),
+            round(game_stats.away),
+        )
+
+    @staticmethod
+    def _draw_result(game_stats: GameStats, n: int = 1) -> tuple[int, int] | tuple[list[int], list[int]]:
+        home_scores = np.random.poisson(game_stats.home, n)
+        away_scores = np.random.poisson(game_stats.away, n)
+        
+        if n == 1:
+            return home_scores.item(), away_scores.item()
+        return home_scores.tolist(), away_scores.tolist()
