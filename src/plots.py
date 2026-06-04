@@ -3,14 +3,14 @@ import pandas as pd
 import seaborn as sns
 
 
-def plot_comparable_matches(matches: pd.DataFrame, team: str, top_n: int = 10) -> None:
+def plot_comparable_matches(matches: pd.DataFrame, team: str, top_n: int = 10, weight_col: str = "weight") -> None:
     """Plot the most comparable matches for a given team."""
-    df = matches.head(top_n).copy()
+    df = matches.sort_values(by="weight", ascending=False).head(top_n).copy()
     labels = (df["away_team"] + " (" + df["date"].dt.strftime("%Y-%m-%d") + ")")
 
-    _, ax = plt.subplots(figsize=(10, 5))
-    bars = ax.barh(y=labels, width=df["weight"])
-
+    _, ax = plt.subplots(figsize=(10, 5), dpi=200)
+    bars = ax.barh(y=labels, width=df[weight_col])
+    
     for bar, score in zip(bars, df["score"]):
         ax.text(
             x=bar.get_width() + 0.005,
@@ -18,11 +18,13 @@ def plot_comparable_matches(matches: pd.DataFrame, team: str, top_n: int = 10) -
             s=str(score),
             va="center",
             ha="left",
+            fontsize=8,
         )
 
+    ax.set_xlim(0, df[weight_col].max() * 1.15)
     ax.invert_yaxis()  # highest weight on top
     ax.set_title(f"Comparable Matches for {team}")
-    ax.set_xlabel("Weight")
+    ax.set_xlabel(weight_col.replace("_", " ").title())
     plt.tight_layout()
     plt.show()
 
@@ -43,7 +45,7 @@ def plot_score_distribution(
 
     df = df.div(df.to_numpy().sum())
 
-    plt.figure(figsize=(10, 10))
+    plt.figure(figsize=(10, 10), dpi=200)
     sns.heatmap(
         data=df,
         annot=True,
