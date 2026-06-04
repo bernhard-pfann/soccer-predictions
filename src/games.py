@@ -5,12 +5,13 @@ import pandas as pd
 MIN_DATE = datetime(2015, 1, 1)
 
 
-def load_games(path: str) -> pd.DataFrame:
+def _load_games(path: str) -> pd.DataFrame:
     cols = ["date", "home_team", "away_team", "home_score", "away_score"]
     return pd.read_csv(path, usecols=cols)
 
 
-def clean_games(df: pd.DataFrame) -> pd.DataFrame:
+def _clean_games(df: pd.DataFrame) -> pd.DataFrame:
+    df = df.dropna()
     df["date"] = pd.to_datetime(df["date"], errors="coerce")
     df = df[df["date"] >= MIN_DATE]  # pyright: ignore[reportAssignmentType]
     df["home_score"] = df["home_score"].astype(int)
@@ -19,6 +20,6 @@ def clean_games(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def process_games(path: str) -> pd.DataFrame:
-    df = load_games(path)
-    df = clean_games(df)
+    df = _load_games(path)
+    df = _clean_games(df)
     return df

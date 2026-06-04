@@ -11,19 +11,19 @@ COUNTRY_MAP = {
     "Congo": "DR Congo",
 }
 
-def load_rankings(path: str) -> pd.DataFrame:
+def _load_rankings(path: str) -> pd.DataFrame:
     cols = ["rank_date", "country_full", "rank"]
     df = pd.read_csv(path, parse_dates=["rank_date"], usecols=cols)
     df.rename(columns={"rank_date": "date", "country_full": "country"}, inplace=True)
     return df
 
 
-def map_ranking_countries(df: pd.DataFrame) -> pd.DataFrame:
+def _map_ranking_countries(df: pd.DataFrame) -> pd.DataFrame:
     df["country"] = df["country"].replace(COUNTRY_MAP)
     return df
 
 
-def clean_rankings(df: pd.DataFrame) -> pd.DataFrame:
+def _clean_rankings(df: pd.DataFrame) -> pd.DataFrame:
     df = df.groupby(by=["country", "date"], as_index=False).agg({"rank": "mean"})
     df = df.assign(rank=df.groupby("country")["rank"].ffill().astype(int))
     df = df.sort_values("date").reset_index(drop=True)
@@ -31,7 +31,7 @@ def clean_rankings(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def process_rankings(path: str) -> pd.DataFrame:
-    df = load_rankings(path)
-    df = map_ranking_countries(df)
-    df = clean_rankings(df)
+    df = _load_rankings(path)
+    df = _map_ranking_countries(df)
+    df = _clean_rankings(df)
     return df
