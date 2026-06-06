@@ -1,3 +1,4 @@
+from collections import Counter
 from dataclasses import dataclass
 from datetime import datetime
 
@@ -39,6 +40,24 @@ class PredictionResult:
     game_stats: GameStats
 
 
+@dataclass(frozen=True)
+class SimulationResult:
+    """Collection of simulated scorelines."""
+    home_scores: list[int]
+    away_scores: list[int]
+
+    @property
+    def scorelines(self) -> list[tuple[int, int]]:
+        return list(zip(
+            self.home_scores,
+            self.away_scores,
+        ))
+
+    @property
+    def most_likely_score(self) -> tuple[int, int]:
+        return Counter(self.scorelines).most_common(1)[0][0]
+
+
 class MatchPredictor:
     """Football match predictor based on weighted historical matches."""
 
@@ -47,15 +66,13 @@ class MatchPredictor:
         self.rankings = rankings
         self.config = config
 
-    def predict(self, home_team: str, away_team: str, day: datetime, sample: bool = True, sample_size: int = 1) -> PredictionResult:
+    def predict(self, home_team: str, away_team: str, day: datetime) -> PredictionResult:
         """
         Predict a match and return all intermediate artifacts.
 
         :param home_team: Home team.
         :param away_team: Away team.
         :param day: Match date.
-        :param sample: Whether to sample from Poisson distributions.
-        :param sample_size: Number of samples to draw. This parameter is unused when sample = False.
         :return: Prediction result.
         """
         rank_diff = self._get_rank_difference(home_team=home_team, away_team=away_team, day=day)
@@ -65,11 +82,7 @@ class MatchPredictor:
         home_stats = self._get_team_stats(home_matches)
         away_stats = self._get_team_stats(away_matches)
         game_stats = self._get_game_stats(home_stats=home_stats, away_stats=away_stats)
-
-        if sample:
-            score = self._draw_result(game_stats, n=sample_size)
-        else:
-            score = self._round_game_stats(game_stats)
+        score = self._round_game_stats(game_stats)
 
         return PredictionResult(
             score=score,
@@ -79,6 +92,25 @@ class MatchPredictor:
             home_stats=home_stats,
             away_stats=away_stats,
             game_stats=game_stats,
+        )
+
+    def simulate(self, home_team: str, away_team: str, day: datetime, n_simulations: int = 10_000) -> SimulationResult:
+        """
+        Generate simulated scorelines for a predicted match.
+
+        :param home_team: Name of the home team.
+        :param away_team: Name of the away team.
+        :param day: Date of the match.
+        :param n_simulations: Number of simulated scorelines to generate.
+        :return: SimulationResult containing sampled home and away scores.
+        """
+        prediction = self.predict(home_team=home_team, away_team=away_team, day=day)
+        home_scores = np.random.poisson(prediction.game_stats.home, n_simulations)
+        away_scores = np.random.poisson(prediction.game_stats.away, n_simulations)
+
+        return SimulationResult(
+            home_scores=home_scores.tolist(),
+            away_scores=away_scores.tolist(),
         )
 
     @staticmethod
@@ -130,12 +162,3 @@ class MatchPredictor:
             round(game_stats.home),
             round(game_stats.away),
         )
-
-    @staticmethod
-    def _draw_result(game_stats: GameStats, n: int = 1) -> tuple[int, int] | tuple[list[int], list[int]]:
-        home_scores = np.random.poisson(game_stats.home, n)
-        away_scores = np.random.poisson(game_stats.away, n)
-        
-        if n == 1:
-            return home_scores.item(), away_scores.item()
-        return home_scores.tolist(), away_scores.tolist()
