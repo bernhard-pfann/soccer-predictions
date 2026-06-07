@@ -1,73 +1,73 @@
-date,home_team,away_team,home_score,away_score,tournament,city,country,neutral
-2026-06-11,Mexico,South Africa,NA,NA,FIFA World Cup,Mexico City,Mexico,FALSE
-2026-06-11,South Korea,Czech Republic,NA,NA,FIFA World Cup,Zapopan,Mexico,TRUE
-2026-06-12,Canada,Bosnia and Herzegovina,NA,NA,FIFA World Cup,Toronto,Canada,FALSE
-2026-06-12,United States,Paraguay,NA,NA,FIFA World Cup,Inglewood,United States,FALSE
-2026-06-13,Qatar,Switzerland,NA,NA,FIFA World Cup,Santa Clara,United States,TRUE
-2026-06-13,Brazil,Morocco,NA,NA,FIFA World Cup,East Rutherford,United States,TRUE
-2026-06-13,Haiti,Scotland,NA,NA,FIFA World Cup,Foxborough,United States,TRUE
-2026-06-13,Australia,Turkey,NA,NA,FIFA World Cup,Vancouver,Canada,TRUE
-2026-06-14,Germany,Curaçao,NA,NA,FIFA World Cup,Houston,United States,TRUE
-2026-06-14,Ivory Coast,Ecuador,NA,NA,FIFA World Cup,Philadelphia,United States,TRUE
-2026-06-14,Netherlands,Japan,NA,NA,FIFA World Cup,Arlington,United States,TRUE
-2026-06-14,Sweden,Tunisia,NA,NA,FIFA World Cup,Guadalupe,Mexico,TRUE
-2026-06-15,Belgium,Egypt,NA,NA,FIFA World Cup,Seattle,United States,TRUE
-2026-06-15,Iran,New Zealand,NA,NA,FIFA World Cup,Inglewood,United States,TRUE
-2026-06-15,Spain,Cape Verde,NA,NA,FIFA World Cup,Atlanta,United States,TRUE
-2026-06-15,Saudi Arabia,Uruguay,NA,NA,FIFA World Cup,Miami Gardens,United States,TRUE
-2026-06-16,France,Senegal,NA,NA,FIFA World Cup,East Rutherford,United States,TRUE
-2026-06-16,Iraq,Norway,NA,NA,FIFA World Cup,Foxborough,United States,TRUE
-2026-06-16,Argentina,Algeria,NA,NA,FIFA World Cup,Kansas City,United States,TRUE
-2026-06-16,Austria,Jordan,NA,NA,FIFA World Cup,Santa Clara,United States,TRUE
-2026-06-17,Portugal,DR Congo,NA,NA,FIFA World Cup,Houston,United States,TRUE
-2026-06-17,Uzbekistan,Colombia,NA,NA,FIFA World Cup,Mexico City,Mexico,TRUE
-2026-06-17,England,Croatia,NA,NA,FIFA World Cup,Arlington,United States,TRUE
-2026-06-17,Ghana,Panama,NA,NA,FIFA World Cup,Toronto,Canada,TRUE
-2026-06-18,Czech Republic,South Africa,NA,NA,FIFA World Cup,Atlanta,United States,TRUE
-2026-06-18,Mexico,South Korea,NA,NA,FIFA World Cup,Zapopan,Mexico,FALSE
-2026-06-18,Switzerland,Bosnia and Herzegovina,NA,NA,FIFA World Cup,Inglewood,United States,TRUE
-2026-06-18,Canada,Qatar,NA,NA,FIFA World Cup,Vancouver,Canada,FALSE
-2026-06-19,Scotland,Morocco,NA,NA,FIFA World Cup,Foxborough,United States,TRUE
-2026-06-19,Brazil,Haiti,NA,NA,FIFA World Cup,Philadelphia,United States,TRUE
-2026-06-19,United States,Australia,NA,NA,FIFA World Cup,Seattle,United States,FALSE
-2026-06-19,Turkey,Paraguay,NA,NA,FIFA World Cup,Santa Clara,United States,TRUE
-2026-06-20,Germany,Ivory Coast,NA,NA,FIFA World Cup,Toronto,Canada,TRUE
-2026-06-20,Ecuador,Curaçao,NA,NA,FIFA World Cup,Kansas City,United States,TRUE
-2026-06-20,Netherlands,Sweden,NA,NA,FIFA World Cup,Houston,United States,TRUE
-2026-06-20,Tunisia,Japan,NA,NA,FIFA World Cup,Guadalupe,Mexico,TRUE
-2026-06-21,Belgium,Iran,NA,NA,FIFA World Cup,Inglewood,United States,TRUE
-2026-06-21,New Zealand,Egypt,NA,NA,FIFA World Cup,Vancouver,Canada,TRUE
-2026-06-21,Spain,Saudi Arabia,NA,NA,FIFA World Cup,Atlanta,United States,TRUE
-2026-06-21,Uruguay,Cape Verde,NA,NA,FIFA World Cup,Miami Gardens,United States,TRUE
-2026-06-22,France,Iraq,NA,NA,FIFA World Cup,Philadelphia,United States,TRUE
-2026-06-22,Norway,Senegal,NA,NA,FIFA World Cup,East Rutherford,United States,TRUE
-2026-06-22,Argentina,Austria,NA,NA,FIFA World Cup,Arlington,United States,TRUE
-2026-06-22,Jordan,Algeria,NA,NA,FIFA World Cup,Santa Clara,United States,TRUE
-2026-06-23,Portugal,Uzbekistan,NA,NA,FIFA World Cup,Houston,United States,TRUE
-2026-06-23,Colombia,DR Congo,NA,NA,FIFA World Cup,Zapopan,Mexico,TRUE
-2026-06-23,England,Ghana,NA,NA,FIFA World Cup,Foxborough,United States,TRUE
-2026-06-23,Panama,Croatia,NA,NA,FIFA World Cup,Toronto,Canada,TRUE
-2026-06-24,Mexico,Czech Republic,NA,NA,FIFA World Cup,Mexico City,Mexico,FALSE
-2026-06-24,South Africa,South Korea,NA,NA,FIFA World Cup,Guadalupe,Mexico,TRUE
-2026-06-24,Canada,Switzerland,NA,NA,FIFA World Cup,Vancouver,Canada,FALSE
-2026-06-24,Bosnia and Herzegovina,Qatar,NA,NA,FIFA World Cup,Seattle,United States,TRUE
-2026-06-24,Scotland,Brazil,NA,NA,FIFA World Cup,Miami Gardens,United States,TRUE
-2026-06-24,Morocco,Haiti,NA,NA,FIFA World Cup,Atlanta,United States,TRUE
-2026-06-25,United States,Turkey,NA,NA,FIFA World Cup,Inglewood,United States,FALSE
-2026-06-25,Paraguay,Australia,NA,NA,FIFA World Cup,Santa Clara,United States,TRUE
-2026-06-25,Curaçao,Ivory Coast,NA,NA,FIFA World Cup,Philadelphia,United States,TRUE
-2026-06-25,Ecuador,Germany,NA,NA,FIFA World Cup,East Rutherford,United States,TRUE
-2026-06-25,Japan,Sweden,NA,NA,FIFA World Cup,Arlington,United States,TRUE
-2026-06-25,Tunisia,Netherlands,NA,NA,FIFA World Cup,Kansas City,United States,TRUE
-2026-06-26,Egypt,Iran,NA,NA,FIFA World Cup,Seattle,United States,TRUE
-2026-06-26,New Zealand,Belgium,NA,NA,FIFA World Cup,Vancouver,Canada,TRUE
-2026-06-26,Cape Verde,Saudi Arabia,NA,NA,FIFA World Cup,Houston,United States,TRUE
-2026-06-26,Uruguay,Spain,NA,NA,FIFA World Cup,Zapopan,Mexico,TRUE
-2026-06-26,Norway,France,NA,NA,FIFA World Cup,Foxborough,United States,TRUE
-2026-06-26,Senegal,Iraq,NA,NA,FIFA World Cup,Toronto,Canada,TRUE
-2026-06-27,Algeria,Austria,NA,NA,FIFA World Cup,Kansas City,United States,TRUE
-2026-06-27,Jordan,Argentina,NA,NA,FIFA World Cup,Arlington,United States,TRUE
-2026-06-27,Colombia,Portugal,NA,NA,FIFA World Cup,Miami Gardens,United States,TRUE
-2026-06-27,DR Congo,Uzbekistan,NA,NA,FIFA World Cup,Atlanta,United States,TRUE
-2026-06-27,Panama,England,NA,NA,FIFA World Cup,East Rutherford,United States,TRUE
-2026-06-27,Croatia,Ghana,NA,NA,FIFA World Cup,Philadelphia,United States,TRUE
+date,home_team,away_team,group
+11.06.2026,Mexico,South Africa,A
+11.06.2026,South Korea,Czech Republic,A
+12.06.2026,Canada,Bosnia and Herzegovina,B
+12.06.2026,United States,Paraguay,D
+13.06.2026,Qatar,Switzerland,B
+13.06.2026,Brazil,Morocco,C
+13.06.2026,Haiti,Scotland,C
+13.06.2026,Australia,Turkey,D
+14.06.2026,Germany,Curaçao,E
+14.06.2026,Ivory Coast,Ecuador,E
+14.06.2026,Netherlands,Japan,F
+14.06.2026,Sweden,Tunisia,F
+15.06.2026,Belgium,Egypt,G
+15.06.2026,Iran,New Zealand,G
+15.06.2026,Spain,Cape Verde,H
+15.06.2026,Saudi Arabia,Uruguay,H
+16.06.2026,France,Senegal,I
+16.06.2026,Iraq,Norway,I
+16.06.2026,Argentina,Algeria,J
+16.06.2026,Austria,Jordan,J
+17.06.2026,Portugal,DR Congo,K
+17.06.2026,Uzbekistan,Colombia,K
+17.06.2026,England,Croatia,L
+17.06.2026,Ghana,Panama,L
+18.06.2026,Czech Republic,South Africa,A
+18.06.2026,Mexico,South Korea,A
+18.06.2026,Switzerland,Bosnia and Herzegovina,B
+18.06.2026,Canada,Qatar,B
+19.06.2026,Scotland,Morocco,C
+19.06.2026,Brazil,Haiti,C
+19.06.2026,United States,Australia,D
+19.06.2026,Turkey,Paraguay,D
+20.06.2026,Germany,Ivory Coast,E
+20.06.2026,Ecuador,Curaçao,E
+20.06.2026,Netherlands,Sweden,F
+20.06.2026,Tunisia,Japan,F
+21.06.2026,Belgium,Iran,G
+21.06.2026,New Zealand,Egypt,G
+21.06.2026,Spain,Saudi Arabia,H
+21.06.2026,Uruguay,Cape Verde,H
+22.06.2026,France,Iraq,I
+22.06.2026,Norway,Senegal,I
+22.06.2026,Argentina,Austria,J
+22.06.2026,Jordan,Algeria,J
+23.06.2026,Portugal,Uzbekistan,K
+23.06.2026,Colombia,DR Congo,K
+23.06.2026,England,Ghana,L
+23.06.2026,Panama,Croatia,L
+24.06.2026,Mexico,Czech Republic,A
+24.06.2026,South Africa,South Korea,A
+24.06.2026,Canada,Switzerland,B
+24.06.2026,Bosnia and Herzegovina,Qatar,B
+24.06.2026,Scotland,Brazil,C
+24.06.2026,Morocco,Haiti,C
+25.06.2026,United States,Turkey,D
+25.06.2026,Paraguay,Australia,D
+25.06.2026,Curaçao,Ivory Coast,E
+25.06.2026,Ecuador,Germany,E
+25.06.2026,Japan,Sweden,F
+25.06.2026,Tunisia,Netherlands,F
+26.06.2026,Egypt,Iran,G
+26.06.2026,New Zealand,Belgium,G
+26.06.2026,Cape Verde,Saudi Arabia,H
+26.06.2026,Uruguay,Spain,H
+26.06.2026,Norway,France,I
+26.06.2026,Senegal,Iraq,I
+27.06.2026,Algeria,Austria,J
+27.06.2026,Jordan,Argentina,J
+27.06.2026,Colombia,Portugal,K
+27.06.2026,DR Congo,Uzbekistan,K
+27.06.2026,Panama,England,L
+27.06.2026,Croatia,Ghana,L

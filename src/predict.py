@@ -48,10 +48,7 @@ class SimulationResult:
 
     @property
     def scorelines(self) -> list[tuple[int, int]]:
-        return list(zip(
-            self.home_scores,
-            self.away_scores,
-        ))
+        return list(zip(self.home_scores, self.away_scores))
 
     @property
     def most_likely_score(self) -> tuple[int, int]:
@@ -112,6 +109,32 @@ class MatchPredictor:
             home_scores=home_scores.tolist(),
             away_scores=away_scores.tolist(),
         )
+
+    def simulate_batch(self, games: pd.DataFrame, day: datetime, n_simulations: int = 10_000) -> pd.DataFrame:
+        """
+        Predict scores for all matches in a gameplan.
+
+        :param gameplan: DataFrame with columns home_team and away_team.
+        :param day: Match date.
+        :param n_simulations: Number of simulations per match.
+        :return: DataFrame containing predicted scores.
+        """
+        predictions = []
+
+        for row in games.itertuples(index=False):
+            result = self.simulate(
+                home_team=row.home_team,
+                away_team=row.away_team,
+                day=day,
+                n_simulations=n_simulations,
+            )
+            predictions.append((
+                row.home_team, 
+                row.away_team, 
+                result.most_likely_score
+            ))
+
+        return pd.DataFrame(data=predictions, columns=["home_team", "away_team", "score"])
 
     @staticmethod
     def _normalize(series: pd.Series | np.ndarray) -> np.ndarray:
