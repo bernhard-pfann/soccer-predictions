@@ -8,10 +8,11 @@ from scipy.stats import expon, norm
 
 
 @dataclass(frozen=True)
-class SimilarityConfig:
+class PredictionConfig:
     """Configuration for match similarity weighting."""
     time_sigma: float = 90
     rank_sigma: float = 15
+    n_simulations: int = 10_000
 
 
 @dataclass(frozen=True)
@@ -58,7 +59,7 @@ class SimulationResult:
 class MatchPredictor:
     """Football match predictor based on weighted historical matches."""
 
-    def __init__(self, dataset: pd.DataFrame, rankings: pd.DataFrame, config: SimilarityConfig = SimilarityConfig()) -> None:
+    def __init__(self, dataset: pd.DataFrame, rankings: pd.DataFrame, config: PredictionConfig = PredictionConfig()) -> None:
         self.dataset = dataset
         self.rankings = rankings
         self.config = config
@@ -91,32 +92,30 @@ class MatchPredictor:
             game_stats=game_stats,
         )
 
-    def simulate(self, home_team: str, away_team: str, day: datetime, n_simulations: int = 10_000) -> SimulationResult:
+    def simulate(self, home_team: str, away_team: str, day: datetime) -> SimulationResult:
         """
         Generate simulated scorelines for a predicted match.
 
         :param home_team: Name of the home team.
         :param away_team: Name of the away team.
         :param day: Date of the match.
-        :param n_simulations: Number of simulated scorelines to generate.
         :return: SimulationResult containing sampled home and away scores.
         """
         prediction = self.predict(home_team=home_team, away_team=away_team, day=day)
-        home_scores = np.random.poisson(prediction.game_stats.home, n_simulations)
-        away_scores = np.random.poisson(prediction.game_stats.away, n_simulations)
+        home_scores = np.random.poisson(prediction.game_stats.home, self.config.n_simulations)
+        away_scores = np.random.poisson(prediction.game_stats.away, self.config.n_simulations)
 
         return SimulationResult(
             home_scores=home_scores.tolist(),
             away_scores=away_scores.tolist(),
         )
 
-    def simulate_batch(self, games: pd.DataFrame, day: datetime, n_simulations: int = 10_000) -> pd.DataFrame:
+    def simulate_batch(self, games: pd.DataFrame, day: datetime) -> pd.DataFrame:
         """
         Predict scores for all matches in a gameplan.
 
         :param gameplan: DataFrame with columns home_team and away_team.
         :param day: Match date.
-        :param n_simulations: Number of simulations per match.
         :return: DataFrame containing predicted scores.
         """
         predictions = []
@@ -126,7 +125,6 @@ class MatchPredictor:
                 home_team=row.home_team,
                 away_team=row.away_team,
                 day=day,
-                n_simulations=n_simulations,
             )
             predictions.append((
                 row.home_team, 
